@@ -161,7 +161,7 @@ const Todo = ({ todo }) => {
       >
         <CardContent style={{ padding: "15px" }}>
           <Grid container spacing={2}>
-            <Grid xs={8}>
+            <Grid item xs={12} md={8}>
               <Typography
                 variant="h5"
                 style={{
@@ -184,12 +184,7 @@ const Todo = ({ todo }) => {
             </Grid>
 
             {/* ACTION BUTTONS */}
-            <Grid
-              xs={4}
-              display="flex"
-              justifyContent="space-around"
-              alignItems="center"
-            >
+            <Grid item xs={12} md={4} container justifyContent="flex-end">
               {/* CHECK ICON BUTTON */}
               <IconButton
                 className="iconButton"
