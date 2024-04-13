@@ -160,7 +160,7 @@ const Todo = ({ todo }) => {
         }}
       >
         <CardContent style={{ padding: "15px" }}>
-          <Grid container spacing={2}>
+          <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={8}>
               <Typography
                 variant="h5"
