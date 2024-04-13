@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { TodosContext } from "./context/todosContext";
 import "./App.css";
+import { ToastProvider } from "./context/toastContext";
 
 const theme = createTheme({
   typography: {
@@ -40,21 +41,24 @@ const initialTodos = [
 
 function App() {
   const [todos, setTodos] = useState(initialTodos);
+
   return (
     <ThemeProvider theme={theme}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          background: "#191b1f",
-          height: "100vh",
-        }}
-      >
-        <TodosContext.Provider value={{ todos, setTodos }}>
-          <TodoList />
-        </TodosContext.Provider>
-      </div>
+      <ToastProvider>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            background: "#191b1f",
+            height: "100vh",
+          }}
+        >
+          <TodosContext.Provider value={{ todos, setTodos }}>
+            <TodoList />
+          </TodosContext.Provider>
+        </div>
+      </ToastProvider>
     </ThemeProvider>
   );
 }

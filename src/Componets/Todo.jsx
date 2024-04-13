@@ -2,11 +2,10 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import PropTypes from "prop-types";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { TodosContext } from "../context/todosContext";
+import { useToast } from "../context/toastContext";
 
 // ICONS
 import CheckIcon from "@mui/icons-material/Check";
@@ -14,21 +13,9 @@ import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined
 import IconButton from "@mui/material/IconButton";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 
-// DIALOG IMPORTS
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-
-const Todo = ({ todo }) => {
+const Todo = ({ todo, handleDeleteClick, handleUpdateClick }) => {
   const { todos, setTodos } = useContext(TodosContext);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showUpdateDialog, setShowUpdateDialog] = useState(false);
-  const [updatedTodo, setUpdatedTodo] = useState({
-    title: todo.title,
-    details: todo.details,
-  });
+  const { showHideToast } = useToast();
 
   //check todo if isCoomleted
   function handleCheckClick() {
@@ -40,117 +27,16 @@ const Todo = ({ todo }) => {
     });
     setTodos(updatedTodos);
     localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    showHideToast(
+      todo.isCompleted
+        ? "Task has been added to finshied tasks"
+        : "Task has been added to unfinshied tasks"
+    );
   }
   //check todo if isCoomleted //
 
-  // update todo
-  function handleUpdateClick() {
-    setShowUpdateDialog(true);
-  }
-  function handleUpdateClose() {
-    setShowUpdateDialog(false);
-  }
-
-  function handleUpdateConfirm() {
-    const updatedTodos = todos.map((t) => {
-      if (t.id == todo.id) {
-        return { ...t, title: updatedTodo.title, details: updatedTodo.details };
-      } else {
-        return t;
-      }
-    });
-    setTodos(updatedTodos);
-    setShowUpdateDialog(false);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
-  }
-  // update todo //
-
-  // delete todo
-  function handleDeleteClick() {
-    setShowDeleteDialog(true);
-  }
-
-  function handleDeleteDialogClose() {
-    setShowDeleteDialog(false);
-  }
-
-  function handleDeleteConfirm() {
-    const prevTodo = todos.filter((t) => t.id !== todo.id);
-    setTodos(prevTodo);
-    localStorage.setItem("todos", JSON.stringify(prevTodo));
-  }
-  // delete todo //
-
   return (
     <>
-      {/* DELETE DIALOG */}
-      <Dialog
-        onClose={handleDeleteDialogClose}
-        open={showDeleteDialog}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          Are you sure you want to delete the task?
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            You cannot undo the deletion once it is completed
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteDialogClose}>Close</Button>
-          <Button autoFocus onClick={handleDeleteConfirm}>
-            Yes, Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-      {/* === DELETE DIALOG === */}
-
-      {/* UPDATE DIALOG */}
-      <Dialog
-        onClose={handleUpdateClose}
-        open={showUpdateDialog}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Update This Task</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Task Title"
-            fullWidth
-            variant="standard"
-            value={updatedTodo.title}
-            onChange={(e) => {
-              setUpdatedTodo({ ...updatedTodo, title: e.target.value });
-            }}
-          />
-
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="details"
-            fullWidth
-            variant="standard"
-            value={updatedTodo.details}
-            onChange={(e) => {
-              setUpdatedTodo({ ...updatedTodo, details: e.target.value });
-            }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleUpdateClose}>Close</Button>
-          <Button autoFocus onClick={handleUpdateConfirm}>
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
-      {/* === UPDATE DIALOG */}
-
       <Card
         className="todoCard"
         sx={{
@@ -207,7 +93,9 @@ const Todo = ({ todo }) => {
                   background: "white",
                   border: "solid #1769aa 3px",
                 }}
-                onClick={handleUpdateClick}
+                onClick={() => {
+                  handleUpdateClick(todo);
+                }}
               >
                 <ModeEditOutlineOutlinedIcon />
               </IconButton>
@@ -221,7 +109,9 @@ const Todo = ({ todo }) => {
                   background: "white",
                   border: "solid #b23c17 3px",
                 }}
-                onClick={handleDeleteClick}
+                onClick={() => {
+                  handleDeleteClick(todo);
+                }}
               >
                 <DeleteOutlineOutlinedIcon />
               </IconButton>
@@ -238,6 +128,8 @@ const Todo = ({ todo }) => {
 // Define prop types
 Todo.propTypes = {
   todo: PropTypes.object.isRequired,
+  handleDeleteClick: PropTypes.func.isRequired,
+  handleUpdateClick: PropTypes.func.isRequired,
 };
 
 export default Todo;
