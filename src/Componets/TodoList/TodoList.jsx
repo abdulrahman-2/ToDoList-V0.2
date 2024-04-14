@@ -1,3 +1,4 @@
+import { useState, useEffect, useMemo } from "react";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -11,12 +12,8 @@ import "./TodoList.css";
 
 // componets
 import Todo from "../Todo";
-import { TodosContext } from "../../context/todosContext";
 import { useToast } from "../../context/toastContext";
-
-// OTHERS
-import { useState, useContext, useEffect, useMemo } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { useTodos, useDispatch } from "../../context/todosContext";
 
 // DIALOG IMPORTS
 import Dialog from "@mui/material/Dialog";
@@ -26,18 +23,18 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
 const TodoList = () => {
+  const todos = useTodos();
+  const dispatch = useDispatch();
   const [dialogTodo, setDialogTodo] = useState(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
-  const { todos, setTodos } = useContext(TodosContext);
   const [inputTitle, setInputTitle] = useState("");
   const [displayedTodosType, setDisplayedTodosType] = useState("all");
   const { showHideToast } = useToast();
 
   useEffect(() => {
-    const storageTodos = JSON.parse(localStorage.getItem("todos")) ?? [];
-    setTodos(storageTodos);
-  }, [setTodos]);
+    dispatch({ type: "get" });
+  }, [dispatch]);
 
   function changeDisplayedTybe(e) {
     setDisplayedTodosType(e.target.value);
@@ -52,7 +49,6 @@ const TodoList = () => {
   }, [todos]);
 
   let filteredTodos;
-
   if (displayedTodosType === "completed") {
     filteredTodos = completedTodos;
   } else if (displayedTodosType === "unCompleted") {
@@ -72,15 +68,7 @@ const TodoList = () => {
 
   // add new todo to todo list
   function addTodo() {
-    const newTodo = {
-      id: uuidv4(),
-      title: inputTitle,
-      details: "",
-      isCompleted: false,
-    };
-    const updatedTodos = [...todos, newTodo];
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    dispatch({ type: "added", payload: { newTitle: inputTitle } });
     setInputTitle("");
     showHideToast("The task has been added successfully");
   }
@@ -98,10 +86,8 @@ const TodoList = () => {
   }
 
   function handleDeleteConfirm() {
-    const prevTodo = todos.filter((t) => t.id !== dialogTodo.id);
-    setTodos(prevTodo);
+    dispatch({ type: "deleted", payload: dialogTodo });
     setShowDeleteDialog(false);
-    localStorage.setItem("todos", JSON.stringify(prevTodo));
     showHideToast("The task has been deleted successfully");
   }
   // delete todo //
@@ -117,16 +103,8 @@ const TodoList = () => {
   }
 
   function handleUpdateConfirm() {
-    const updatedTodos = todos.map((t) => {
-      if (t.id == dialogTodo.id) {
-        return { ...t, title: dialogTodo.title, details: dialogTodo.details };
-      } else {
-        return t;
-      }
-    });
-    setTodos(updatedTodos);
+    dispatch({ type: "updated", payload: dialogTodo });
     setShowUpdateDialog(false);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
     showHideToast("The task has been updated successfully");
   }
   // update todo //

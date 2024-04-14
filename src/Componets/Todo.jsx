@@ -2,9 +2,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2";
-import PropTypes from "prop-types";
-import { useContext } from "react";
-import { TodosContext } from "../context/todosContext";
+import { useDispatch } from "../context/todosContext";
 import { useToast } from "../context/toastContext";
 
 // ICONS
@@ -14,23 +12,16 @@ import IconButton from "@mui/material/IconButton";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 
 const Todo = ({ todo, handleDeleteClick, handleUpdateClick }) => {
-  const { todos, setTodos } = useContext(TodosContext);
+  const dispatch = useDispatch();
   const { showHideToast } = useToast();
 
   //check todo if isCoomleted
   function handleCheckClick() {
-    const updatedTodos = todos.map((t) => {
-      if (t.id == todo.id) {
-        t.isCompleted = !t.isCompleted;
-      }
-      return t;
-    });
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    dispatch({ type: "toggledCompleted", payload: todo });
     showHideToast(
       todo.isCompleted
-        ? "Task has been added to finshied tasks"
-        : "Task has been added to unfinshied tasks"
+        ? "Task has been added to unfinshied tasks"
+        : "Task has been added to finshied tasks"
     );
   }
   //check todo if isCoomleted //
@@ -123,13 +114,6 @@ const Todo = ({ todo, handleDeleteClick, handleUpdateClick }) => {
       </Card>
     </>
   );
-};
-
-// Define prop types
-Todo.propTypes = {
-  todo: PropTypes.object.isRequired,
-  handleDeleteClick: PropTypes.func.isRequired,
-  handleUpdateClick: PropTypes.func.isRequired,
 };
 
 export default Todo;

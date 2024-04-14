@@ -1,10 +1,8 @@
 import TodoList from "./Componets/TodoList/TodoList";
-import { v4 as uuidv4 } from "uuid";
-import { useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { TodosContext } from "./context/todosContext";
 import "./App.css";
 import { ToastProvider } from "./context/toastContext";
+import TodosProvider from "./context/todosContext";
 
 const theme = createTheme({
   typography: {
@@ -18,47 +16,24 @@ const theme = createTheme({
   },
 });
 
-const initialTodos = [
-  {
-    id: uuidv4(),
-    title: "First Task",
-    details: "First Task Details",
-    isCompleted: false,
-  },
-  {
-    id: uuidv4(),
-    title: "Second Task",
-    details: "Second Task Details",
-    isCompleted: false,
-  },
-  {
-    id: uuidv4(),
-    title: "Third Task",
-    details: "Third Task Details",
-    isCompleted: false,
-  },
-];
-
 function App() {
-  const [todos, setTodos] = useState(initialTodos);
-
   return (
     <ThemeProvider theme={theme}>
-      <ToastProvider>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            background: "#191b1f",
-            height: "100vh",
-          }}
-        >
-          <TodosContext.Provider value={{ todos, setTodos }}>
+      <TodosProvider>
+        <ToastProvider>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              background: "#191b1f",
+              height: "100vh",
+            }}
+          >
             <TodoList />
-          </TodosContext.Provider>
-        </div>
-      </ToastProvider>
+          </div>
+        </ToastProvider>
+      </TodosProvider>
     </ThemeProvider>
   );
 }

@@ -3,7 +3,6 @@ import MySnakbar from "../Componets/MySnakbar";
 
 const ToastContext = createContext({});
 
-// eslint-disable-next-line react/prop-types
 export const ToastProvider = ({ children }) => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -24,7 +23,6 @@ export const ToastProvider = ({ children }) => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useToast = () => {
   return useContext(ToastContext);
 };
