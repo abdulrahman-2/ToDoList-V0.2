@@ -8,6 +8,8 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Unstable_Grid2";
 import Container from "@mui/material/Container";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import "./TodoList.css";
 
 // componets
@@ -21,6 +23,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { Box } from "@mui/material";
 
 const TodoList = () => {
   const todos = useTodos();
@@ -128,7 +131,11 @@ const TodoList = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDeleteDialogClose}>Close</Button>
-          <Button autoFocus onClick={handleDeleteConfirm}>
+          <Button
+            autoFocus
+            onClick={handleDeleteConfirm}
+            style={{ color: "red" }}
+          >
             Yes, Delete
           </Button>
         </DialogActions>
@@ -190,8 +197,12 @@ const TodoList = () => {
             overflowY: "scroll",
           }}
         >
-          <Typography variant="h2" sx={{ fontWeight: "bold" }}>
-            Tasks
+          <Typography variant="h2" sx={{ fontWeight: "semibold" }}>
+            To
+            <span style={{ color: "#283593" }}>
+              d
+              <CheckCircleOutlineIcon sx={{ fontSize: "35px" }} />
+            </span>
           </Typography>
           <Divider />
 
@@ -219,7 +230,32 @@ const TodoList = () => {
           <div
             style={{ display: "flex", flexDirection: "column", gap: "20px" }}
           >
-            {todosJsx}
+            {filteredTodos.length > 0 ? (
+              todosJsx
+            ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#283593",
+                  fontSize: "20px",
+                  padding: "20px",
+                  opacity: 0.8,
+                  animation: "fadeIn 1s ease-in-out",
+                  "@keyframes fadeIn": {
+                    "0%": { opacity: 0 },
+                    "100%": { opacity: 0.8 },
+                  },
+                }}
+              >
+                <AssignmentTurnedInIcon
+                  sx={{ fontSize: "50px", mb: 1, color: "#283593" }}
+                />
+                Your Todos list is empty!
+              </Box>
+            )}
           </div>
           {/* ==== todos container ==== */}
 
@@ -249,7 +285,7 @@ const TodoList = () => {
               <TextField
                 style={{ width: "100%" }}
                 id="outlined-basic"
-                label="Task Tiltle"
+                label="Todo Title"
                 variant="outlined"
                 value={inputTitle}
                 onChange={(e) => {
